@@ -6,4 +6,5 @@ public class Tutor{
     public string Descripcion {get; set;}
     public string Imagen {get; set;}
     public bool Activo {get; set;}
+    public List<Materia> Materias {get; set;} = new List<Materia>();
 }
