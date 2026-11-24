@@ -142,6 +142,39 @@ public class HomeController : Controller
         ViewBag.Pasadas = bd.ObtenerInscripcionesPasadas(idUsuario.Value);
         return View();
     }
+    [HttpPost]
+    public string Cancelar(int idInscripcion)
+    {
+        int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+
+        if (idUsuario == null)
+        {
+            return "Tenés que iniciar sesión";
+        }
+
+        BD bd = new BD();
+        Inscripcion? inscripcion = bd.ObtenerInscripcion(idInscripcion);
+
+        if (inscripcion == null || inscripcion.IdUsuario != idUsuario.Value || inscripcion.Cancelado)
+        {
+            return "No se encontró la inscripción";
+        }
+
+        string cuando = inscripcion.NombreMateria + " el " + inscripcion.FechaHora.ToString("dd/MM") + " a las " + inscripcion.FechaHora.ToString("HH:mm");
+
+        if (inscripcion.FechaHora <= DateTime.Now)
+        {
+            return "La clase de " + cuando + " ya pasó";
+        }
+
+        if (inscripcion.FechaHora < DateTime.Now.AddHours(24))
+        {
+            return "No podés cancelar la clase de " + cuando + ": solo se puede cancelar hasta 24 horas antes";
+        }
+
+        bd.CancelarInscripcion(idInscripcion);
+        return "OK";
+    }
 
     public IActionResult Privacy()
     {
