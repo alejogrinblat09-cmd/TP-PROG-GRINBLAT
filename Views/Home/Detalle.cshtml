@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Detalle";
+    Tutor tutor = ViewBag.Tutor;
+    List<ClaseApoyo> clases = ViewBag.Clases;
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <img src="~/img/@tutor.Imagen" class="img-fluid" alt="@tutor.Nombre" />
+    </div>
+    <div class="col-md-8">
+        <h2>@tutor.Nombre</h2>
+        <p>@tutor.Descripcion</p>
+        <p>
+            @foreach (Materia materia in tutor.Materias)
+            {
+                <span class="badge bg-secondary">@materia.Nombre</span>
+            }
+        </p>
+
+        <h4>Anotarme a una clase</h4>
+        <p class="text-danger">@ViewBag.Error</p>
+
+        @if (clases.Count == 0)
+        {
+            <p>Este tutor no tiene clases próximas.</p>
+        }
+        else
+        {
+            <form method="post" asp-action="Inscribirse">
+                <input type="hidden" name="idTutor" value="@tutor.Id" />
+                <select name="idClase" id="idClase" class="form-select mb-2" onchange="verLugares()">
+                    <option value="">Elegí una clase</option>
+                    @foreach (ClaseApoyo clase in clases)
+                    {
+                        <option value="@clase.Id">@clase.NombreMateria - @clase.FechaHora.ToString("dd/MM HH:mm") - Cupo: @clase.Cupo</option>
+                    }
+                </select>
+                <p id="lugares"></p>
+                <button type="submit" class="btn btn-primary">Anotarme</button>
+            </form>
+        }
+
+        <a asp-action="Index" class="btn btn-link">Volver al catálogo</a>
+    </div>
+</div>
