@@ -44,3 +44,26 @@
         <a asp-action="Index" class="btn btn-link">Volver al catálogo</a>
     </div>
 </div>
+
+<script>
+    function verLugares()
+    {
+        const idClase = document.getElementById("idClase").value;
+
+        if (idClase === "") {
+            document.getElementById("lugares").innerHTML = "";
+            return;
+        }
+
+        fetch('/Home/LugaresDisponibles?idClase=' + idClase, {method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("lugares").innerHTML = "Lugares disponibles: " + data;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
