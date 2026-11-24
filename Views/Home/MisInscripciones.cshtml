@@ -57,3 +57,24 @@ else
         }
     </table>
 }
+
+<script>
+    function cancelar(idInscripcion)
+    {
+        fetch('/Home/Cancelar?idInscripcion=' + idInscripcion, {method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "OK") {
+                document.getElementById("inscripcion" + idInscripcion).style.display = "none";
+                document.getElementById("mensaje").innerHTML = "";
+            } else {
+                document.getElementById("mensaje").innerHTML = data;
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
