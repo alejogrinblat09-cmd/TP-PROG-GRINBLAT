@@ -6,4 +6,5 @@ public class ClaseApoyo{
     public int IdMateria {get; set;}
     public DateTime FechaHora {get; set;}
     public int Cupo {get; set;}
+    public string NombreMateria {get; set;}
 }
