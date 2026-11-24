@@ -115,4 +115,40 @@ public class BD
             conexion.Execute(sql, new { pIdClase = idClase, pIdUsuario = idUsuario });
         }
     }
+    
+    public List<Inscripcion> ObtenerInscripcionesProximas(int idUsuario)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT Inscripciones.*, ClasesApoyo.FechaHora, Materias.Nombre AS NombreMateria, Tutores.Nombre AS NombreTutor FROM Inscripciones INNER JOIN ClasesApoyo ON Inscripciones.IdClaseApoyo = ClasesApoyo.Id INNER JOIN Materias ON ClasesApoyo.IdMateria = Materias.Id INNER JOIN Tutores ON ClasesApoyo.IdTutor = Tutores.Id WHERE Inscripciones.IdUsuario = @pIdUsuario AND Inscripciones.Cancelado = 0 AND ClasesApoyo.FechaHora > GETDATE() ORDER BY ClasesApoyo.FechaHora";
+            return conexion.Query<Inscripcion>(sql, new { pIdUsuario = idUsuario }).ToList();
+        }
+    }
+
+    public List<Inscripcion> ObtenerInscripcionesPasadas(int idUsuario)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT Inscripciones.*, ClasesApoyo.FechaHora, Materias.Nombre AS NombreMateria, Tutores.Nombre AS NombreTutor FROM Inscripciones INNER JOIN ClasesApoyo ON Inscripciones.IdClaseApoyo = ClasesApoyo.Id INNER JOIN Materias ON ClasesApoyo.IdMateria = Materias.Id INNER JOIN Tutores ON ClasesApoyo.IdTutor = Tutores.Id WHERE Inscripciones.IdUsuario = @pIdUsuario AND Inscripciones.Cancelado = 0 AND ClasesApoyo.FechaHora <= GETDATE() ORDER BY ClasesApoyo.FechaHora DESC";
+            return conexion.Query<Inscripcion>(sql, new { pIdUsuario = idUsuario }).ToList();
+        }
+    }
+
+    public Inscripcion? ObtenerInscripcion(int idInscripcion)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT Inscripciones.*, ClasesApoyo.FechaHora, Materias.Nombre AS NombreMateria, Tutores.Nombre AS NombreTutor FROM Inscripciones INNER JOIN ClasesApoyo ON Inscripciones.IdClaseApoyo = ClasesApoyo.Id INNER JOIN Materias ON ClasesApoyo.IdMateria = Materias.Id INNER JOIN Tutores ON ClasesApoyo.IdTutor = Tutores.Id WHERE Inscripciones.Id = @pIdInscripcion";
+            return conexion.QueryFirstOrDefault<Inscripcion>(sql, new { pIdInscripcion = idInscripcion });
+        }
+    }
+
+    public void CancelarInscripcion(int idInscripcion)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "UPDATE Inscripciones SET Cancelado = 1, FechaCancelacion = GETDATE() WHERE Id = @pIdInscripcion";
+            conexion.Execute(sql, new { pIdInscripcion = idInscripcion });
+        }
+    }
 }
