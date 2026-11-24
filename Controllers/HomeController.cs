@@ -6,8 +6,13 @@ namespace TP_PROG_GRINBLAT.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
+        public IActionResult Index()
     {
+        if (HttpContext.Session.GetInt32("IdUsuario") == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
         return View();
     }
 
