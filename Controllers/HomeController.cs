@@ -111,6 +111,23 @@ public class HomeController : Controller
         bd.AgregarInscripcion(idClase, idUsuario.Value);
         return RedirectToAction("MisInscripciones");
     }
+    public int LugaresDisponibles(int idClase)
+    {
+        if (HttpContext.Session.GetInt32("IdUsuario") == null)
+        {
+            return 0;
+        }
+
+        BD bd = new BD();
+        ClaseApoyo? clase = bd.ObtenerClase(idClase);
+
+        if (clase == null)
+        {
+            return 0;
+        }
+
+        return clase.Cupo - bd.ContarInscriptos(idClase);
+    }
 
     public IActionResult Privacy()
     {
