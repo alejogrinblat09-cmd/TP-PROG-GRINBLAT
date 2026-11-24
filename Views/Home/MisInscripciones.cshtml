@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Mis inscripciones";
+    List<Inscripcion> proximas = ViewBag.Proximas;
+    List<Inscripcion> pasadas = ViewBag.Pasadas;
+}
+
+<h2>Mis inscripciones</h2>
+
+<p class="text-danger" id="mensaje"></p>
+
+<h4>Próximas</h4>
+@if (proximas.Count == 0)
+{
+    <p>No tenés clases próximas.</p>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>Materia</th>
+            <th>Tutor</th>
+            <th>Fecha</th>
+            <th></th>
+        </tr>
+        @foreach (Inscripcion inscripcion in proximas)
+        {
+            <tr id="inscripcion@(inscripcion.Id)">
+                <td>@inscripcion.NombreMateria</td>
+                <td>@inscripcion.NombreTutor</td>
+                <td>@inscripcion.FechaHora.ToString("dd/MM HH:mm")</td>
+                <td><button class="btn btn-danger btn-sm" onclick="cancelar(@inscripcion.Id)">Cancelar</button></td>
+            </tr>
+        }
+    </table>
+}
+
+<h4>Pasadas</h4>
+@if (pasadas.Count == 0)
+{
+    <p>No tenés clases pasadas.</p>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>Materia</th>
+            <th>Tutor</th>
+            <th>Fecha</th>
+        </tr>
+        @foreach (Inscripcion inscripcion in pasadas)
+        {
+            <tr>
+                <td>@inscripcion.NombreMateria</td>
+                <td>@inscripcion.NombreTutor</td>
+                <td>@inscripcion.FechaHora.ToString("dd/MM HH:mm")</td>
+            </tr>
+        }
+    </table>
+}
