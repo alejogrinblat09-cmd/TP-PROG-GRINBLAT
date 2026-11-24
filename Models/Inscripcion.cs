@@ -7,4 +7,7 @@ public class Inscripcion{
     public DateTime FechaInscripcion {get; set;}
     public bool Cancelado {get; set;}
     public DateTime? FechaCancelacion {get; set;}
+    public DateTime FechaHora {get; set;}
+    public string NombreMateria {get; set;}
+    public string NombreTutor {get; set;}
 }
