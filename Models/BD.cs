@@ -60,4 +60,59 @@ public class BD
             return conexion.Query<Materia>(sql, new { pIdTutor = idTutor }).ToList();
         }
     }
+    
+    public Tutor? ObtenerTutor(int id)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT * FROM Tutores WHERE Id = @pId AND Activo = 1";
+            return conexion.QueryFirstOrDefault<Tutor>(sql, new { pId = id });
+        }
+    }
+
+    public List<ClaseApoyo> ObtenerClasesDeTutor(int idTutor)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT ClasesApoyo.*, Materias.Nombre AS NombreMateria FROM ClasesApoyo INNER JOIN Materias ON ClasesApoyo.IdMateria = Materias.Id WHERE ClasesApoyo.IdTutor = @pIdTutor AND ClasesApoyo.FechaHora > GETDATE() ORDER BY ClasesApoyo.FechaHora";
+            return conexion.Query<ClaseApoyo>(sql, new { pIdTutor = idTutor }).ToList();
+        }
+    }
+
+    public ClaseApoyo? ObtenerClase(int idClase)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT ClasesApoyo.*, Materias.Nombre AS NombreMateria FROM ClasesApoyo INNER JOIN Materias ON ClasesApoyo.IdMateria = Materias.Id WHERE ClasesApoyo.Id = @pIdClase";
+            return conexion.QueryFirstOrDefault<ClaseApoyo>(sql, new { pIdClase = idClase });
+        }
+    }
+
+    public int ContarInscriptos(int idClase)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT COUNT(*) FROM Inscripciones WHERE IdClaseApoyo = @pIdClase AND Cancelado = 0";
+            return conexion.QueryFirstOrDefault<int>(sql, new { pIdClase = idClase });
+        }
+    }
+
+    public bool EstaInscripto(int idClase, int idUsuario)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT * FROM Inscripciones WHERE IdClaseApoyo = @pIdClase AND IdUsuario = @pIdUsuario AND Cancelado = 0";
+            Inscripcion? inscripcion = conexion.QueryFirstOrDefault<Inscripcion>(sql, new { pIdClase = idClase, pIdUsuario = idUsuario });
+            return inscripcion != null;
+        }
+    }
+
+    public void AgregarInscripcion(int idClase, int idUsuario)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "INSERT INTO Inscripciones (IdClaseApoyo, IdUsuario, FechaInscripcion, Cancelado) VALUES (@pIdClase, @pIdUsuario, GETDATE(), 0)";
+            conexion.Execute(sql, new { pIdClase = idClase, pIdUsuario = idUsuario });
+        }
+    }
 }
