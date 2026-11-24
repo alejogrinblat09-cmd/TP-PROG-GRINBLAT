@@ -31,4 +31,47 @@ public class AccountController : Controller
         HttpContext.Session.Clear();
         return RedirectToAction("Login");
     }
+        public IActionResult Registro()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Registro(string nombreUsuario, string contrasena, string confirmarContrasena, string nombre, string apellido)
+    {
+        if (string.IsNullOrEmpty(nombreUsuario) || string.IsNullOrEmpty(contrasena) || string.IsNullOrEmpty(nombre) || string.IsNullOrEmpty(apellido))
+        {
+            ViewBag.Error = "Completá todos los campos";
+            return View();
+        }
+
+        if (contrasena.Length < 4)
+        {
+            ViewBag.Error = "La contraseña tiene que tener al menos 4 caracteres";
+            return View();
+        }
+
+        if (contrasena != confirmarContrasena)
+        {
+            ViewBag.Error = "Las contraseñas no coinciden";
+            return View();
+        }
+
+        BD bd = new BD();
+
+        if (bd.ExisteNombreUsuario(nombreUsuario))
+        {
+            ViewBag.Error = "El usuario " + nombreUsuario + " ya existe, elegí otro";
+            return View();
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.NombreUsuario = nombreUsuario;
+        usuario.Contrasena = contrasena;
+        usuario.Nombre = nombre;
+        usuario.Apellido = apellido;
+        bd.AgregarUsuario(usuario);
+
+        return RedirectToAction("Login");
+    }
 }
