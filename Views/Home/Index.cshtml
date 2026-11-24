@@ -24,3 +24,45 @@
         </div>
     }
 </div>
+
+<button id="btnVerMas" class="btn btn-secondary" onclick="verMas()">Ver más</button>
+
+<script>
+    function verMas()
+    {
+        const contenedor = document.getElementById("contenedorTutores");
+        const desde = contenedor.children.length;
+
+        fetch('/Home/VerMas?desde=' + desde, {method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(tutor => {
+                contenedor.innerHTML +=
+                    '<div class="col-md-3 mb-4">' +
+                        '<div class="card h-100">' +
+                            '<img src="/img/' + tutor.imagen + '" class="card-img-top" alt="' + tutor.nombre + '" />' +
+                            '<div class="card-body">' +
+                                '<h5 class="card-title">' + tutor.nombre + '</h5>' +
+                                '<p class="card-text" id="materias' + tutor.id + '"></p>' +
+                                '<a href="/Home/Detalle/' + tutor.id + '" class="btn btn-primary">Ver detalle</a>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+
+                tutor.materias.forEach(materia => {
+                    document.getElementById("materias" + tutor.id).innerHTML +=
+                        '<span class="badge bg-secondary">' + materia.nombre + '</span> ';
+                });
+            });
+
+            if (data.length < 8) {
+                document.getElementById("btnVerMas").style.display = "none";
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
