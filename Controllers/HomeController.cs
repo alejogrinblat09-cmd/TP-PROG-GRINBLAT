@@ -13,6 +13,15 @@ public class HomeController : Controller
             return RedirectToAction("Login", "Account");
         }
 
+                BD bd = new BD();
+        List<Tutor> tutores = bd.ObtenerTutores(0, 8);
+
+        foreach (Tutor tutor in tutores)
+        {
+            tutor.Materias = bd.ObtenerMateriasDeTutor(tutor.Id);
+        }
+
+        ViewBag.Tutores = tutores;
         return View();
     }
 
