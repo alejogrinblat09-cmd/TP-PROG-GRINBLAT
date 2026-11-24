@@ -43,4 +43,21 @@ public class BD
             });
         }
     }
+        public List<Tutor> ObtenerTutores(int desde, int cantidad)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT * FROM Tutores WHERE Activo = 1 ORDER BY Nombre OFFSET @pDesde ROWS FETCH NEXT @pCantidad ROWS ONLY";
+            return conexion.Query<Tutor>(sql, new { pDesde = desde, pCantidad = cantidad }).ToList();
+        }
+    }
+
+    public List<Materia> ObtenerMateriasDeTutor(int idTutor)
+    {
+        using (SqlConnection conexion = ObtenerConexion())
+        {
+            string sql = "SELECT Materias.* FROM Materias INNER JOIN TutoresMaterias ON Materias.Id = TutoresMaterias.IdMateria WHERE TutoresMaterias.IdTutor = @pIdTutor";
+            return conexion.Query<Materia>(sql, new { pIdTutor = idTutor }).ToList();
+        }
+    }
 }
