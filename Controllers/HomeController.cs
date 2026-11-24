@@ -41,6 +41,76 @@ public class HomeController : Controller
 
         return tutores;
     }
+    public IActionResult Detalle(int id)
+    {
+        if (HttpContext.Session.GetInt32("IdUsuario") == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        BD bd = new BD();
+        Tutor? tutor = bd.ObtenerTutor(id);
+
+        if (tutor == null)
+        {
+            return RedirectToAction("Index");
+        }
+
+        tutor.Materias = bd.ObtenerMateriasDeTutor(id);
+        ViewBag.Tutor = tutor;
+        ViewBag.Clases = bd.ObtenerClasesDeTutor(id);
+        return View("Detalle");
+    }
+
+    [HttpPost]
+    public IActionResult Inscribirse(int idTutor, int idClase)
+    {
+        int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+
+        if (idUsuario == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        BD bd = new BD();
+        Tutor? tutor = bd.ObtenerTutor(idTutor);
+
+        if (tutor == null)
+        {
+            return RedirectToAction("Index");
+        }
+
+        ClaseApoyo? clase = bd.ObtenerClase(idClase);
+
+        if (clase == null || clase.IdTutor != idTutor)
+        {
+            ViewBag.Error = "Elegí una clase para anotarte";
+            return Detalle(idTutor);
+        }
+
+        string cuando = clase.NombreMateria + " el " + clase.FechaHora.ToString("dd/MM") + " a las " + clase.FechaHora.ToString("HH:mm");
+
+        if (clase.FechaHora <= DateTime.Now)
+        {
+            ViewBag.Error = "La clase de " + cuando + " ya pasó";
+            return Detalle(idTutor);
+        }
+
+        if (bd.EstaInscripto(idClase, idUsuario.Value))
+        {
+            ViewBag.Error = "Ya estás anotado en " + cuando;
+            return Detalle(idTutor);
+        }
+
+        if (bd.ContarInscriptos(idClase) >= clase.Cupo)
+        {
+            ViewBag.Error = "No quedan lugares en " + cuando;
+            return Detalle(idTutor);
+        }
+
+        bd.AgregarInscripcion(idClase, idUsuario.Value);
+        return RedirectToAction("MisInscripciones");
+    }
 
     public IActionResult Privacy()
     {
