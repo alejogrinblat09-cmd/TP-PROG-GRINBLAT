@@ -128,6 +128,20 @@ public class HomeController : Controller
 
         return clase.Cupo - bd.ContarInscriptos(idClase);
     }
+    public IActionResult MisInscripciones()
+    {
+        int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+
+        if (idUsuario == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        BD bd = new BD();
+        ViewBag.Proximas = bd.ObtenerInscripcionesProximas(idUsuario.Value);
+        ViewBag.Pasadas = bd.ObtenerInscripcionesPasadas(idUsuario.Value);
+        return View();
+    }
 
     public IActionResult Privacy()
     {
