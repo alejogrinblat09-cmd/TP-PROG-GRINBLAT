@@ -20,9 +20,26 @@ public class HomeController : Controller
         {
             tutor.Materias = bd.ObtenerMateriasDeTutor(tutor.Id);
         }
-
+        
         ViewBag.Tutores = tutores;
         return View();
+    }
+            public List<Tutor> VerMas(int desde)
+    {
+        if (HttpContext.Session.GetInt32("IdUsuario") == null)
+        {
+            return new List<Tutor>();
+        }
+
+        BD bd = new BD();
+        List<Tutor> tutores = bd.ObtenerTutores(desde, 8);
+
+        foreach (Tutor tutor in tutores)
+        {
+            tutor.Materias = bd.ObtenerMateriasDeTutor(tutor.Id);
+        }
+
+        return tutores;
     }
 
     public IActionResult Privacy()
